@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from './axiosInstance';
 import "./SignupModal.css"; // import the CSS we'll define below
 
 const Signup = ({ isOpen, onClose ,complete}) => {
@@ -21,8 +21,10 @@ const Signup = ({ isOpen, onClose ,complete}) => {
     }
 
     try {
+      console.log("Sending signup request", login);
       const response = await axios.post("http://localhost:8080/signup", login);
       alert("Signup successful!");
+      localStorage.setItem("token", response.data.token);
       complete();
       onClose(); // Close modal after signup
     } catch (err) {

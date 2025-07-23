@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../components/axiosInstance';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import Login from '../components/Login';
@@ -34,7 +34,7 @@ const HomePage = () => {
   const handleSearch = async () => {
     try {
       const response = await axios.post('http://localhost:8080/getFlights', form);
-      console.log("Received Flights Data:", response.data); // Debugging line
+      console.log("Received Flights Data:", response.data);
       setFlights(response.data);
        // Assuming backend returns a list of flights
       setshowFlights(true);
@@ -56,8 +56,8 @@ const HomePage = () => {
       <h1>Flight Search</h1>
       <div className="auth-container">
         {showEnter && (
-            <><button id="login" onClick={() => { setshowLogin(true); } }>Login</button>
-            <button id="SignUp" onClick={() => { setSignup(true); } }>Sign up</button></>
+            <><button id="login" onClick={() =>  setshowLogin(true)  }>Login</button>
+            <button id="SignUp" onClick={() =>  setSignup(true)  }>Sign up</button></>
         )}
         {!showEnter && (
            <div class = "login_complete">Login Complete</div>

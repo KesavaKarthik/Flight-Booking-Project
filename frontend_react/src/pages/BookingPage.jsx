@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from '../components/axiosInstance';
 import "./Booking.css";
 import { useLocation } from "react-router-dom";
 import SelectSeats from "../components/SelectSeats";

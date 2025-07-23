@@ -12,6 +12,8 @@ public class Login {
 
     @Column( name = "password")
     private String password;
+
+    public Login(){}
     
     public String getEmailId(){
         return emailId;
@@ -33,14 +35,5 @@ public class Login {
 
 
     }
-    
-    
-    
-
-
-
-
-
-
     
 }

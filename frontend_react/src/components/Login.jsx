@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
-import "./LoginModal.css"; // add this line to use the CSS below
-
+import axios from './axiosInstance';
+import "./LoginModal.css"; // add this line to use the CSS below 
 const Login = ({ isOpen, onClose ,complete}) => {
   const [login, setLogin] = useState({
     emailId: "",
@@ -19,6 +18,8 @@ const Login = ({ isOpen, onClose ,complete}) => {
     // If the response is OK (status 200)
     if (response.status === 200) {
       alert("Login successful!");
+      localStorage.setItem('token' , response.data.token);
+
       complete();
       onClose(); // Optionally close the modal
     }

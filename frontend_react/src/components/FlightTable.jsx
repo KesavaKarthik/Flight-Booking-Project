@@ -1,7 +1,7 @@
 //import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FlightTable.css';
-import axios from 'axios';
+import axios from './axiosInstance';
 
 const FlightTable  = ({isOpen , flights ,sort , form}) => {
     if(!isOpen) return null;
@@ -13,8 +13,7 @@ const FlightTable  = ({isOpen , flights ,sort , form}) => {
         
     }
     else{
-        //sortedFlights = [...flights].sort((a, b) => b.price - a.price);
-        // prevent crash
+      
         sortedFlights = [...flights].sort((a, b) => {
         const [h1, m1, s1] = a.departureTime.split(":").map(Number);
         const [h2, m2, s2] = b.departureTime.split(":").map(Number);

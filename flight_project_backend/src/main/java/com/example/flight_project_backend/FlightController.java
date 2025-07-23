@@ -1,12 +1,14 @@
 package com.example.flight_project_backend;
-
-
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.example.flight_project_backend.security.JwtUtil;
+import org.springframework.security.core.Authentication;
 
-
-//import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ public class FlightController {
     private final FlightRepository flightRepository;
     private final BookingRepository bookingRepository;
     private final SeatsRepository seatsRepository;
+
     
 
     public FlightController(FlightRepository flightRepository, BookingRepository bookingRepository ,SeatsRepository seatsRepository) {
@@ -27,7 +30,7 @@ public class FlightController {
         this.seatsRepository = seatsRepository;
         
     }
-    // ✅ Get filtered flights
+    //Get filtered flights
     @PostMapping("/getFlights")
     public List<Flight> getFilteredFlights(@RequestBody Map<String, String > flight_data) {
         System.out.println("Received: " + flight_data);
@@ -56,7 +59,7 @@ public class FlightController {
 
         }
         
-        System.out.println("Found Flights: " + flights.size()); // Log the size of the list
+        System.out.println("Found Flights: " + flights.size());
     
     return final_flights;
     }
@@ -117,31 +120,50 @@ public class FlightController {
 
     @Autowired
     private LoginRepository loginRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+    
     @PostMapping("/login")
-    public ResponseEntity<String> checkLogin(@RequestBody Login login){
+    public ResponseEntity<?> checkLogin(@RequestBody Login login){
         Login details = loginRepository.findByEmailId(login.getEmailId());
         if(details == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email");
 
         }
-        else if(!details.getPassword().equals(login.getPassword())){
+        else if(!passwordEncoder.matches(login.getPassword() , details.getPassword())){
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
 
         }
-        else return ResponseEntity.ok("Login successful");
+        else{
+            String token = jwtUtil.generateToken(login.getEmailId());
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
+        }
+
 
 
 
 
     }
+    @GetMapping("/secure-test")
+        public ResponseEntity<String> secureTest(Authentication authentication) {
+        return ResponseEntity.ok("✅ Logged in as: " + authentication.getName());
+    }
     // creating object of repository
     @Autowired
     private SignupRepository signupRepository;
     @PostMapping("/signup")
-    public Login Signup(@RequestBody Login login){
+    public ResponseEntity<?> Signup(@RequestBody Login login){
         System.out.println("hi");
-        return signupRepository.save(login);
+        login.setPassword(passwordEncoder.encode(login.getPassword()));
+        signupRepository.save(login);
+        String token = jwtUtil.generateToken(login.getEmailId());
+        System.out.println("Signup endpoint hit"); 
+        return ResponseEntity.ok(Collections.singletonMap("token" , token));
     }
     
 }
